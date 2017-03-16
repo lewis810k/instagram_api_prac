@@ -33,6 +33,12 @@ for key, key_dict in config_common.items():
     for inner_key, inner_key_dict in key_dict.items():
         config[key][inner_key] = inner_key_dict
 
+# MEDIA ROOT
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+
+
 SECRET_KEY = config['django']['secret_key']
 ALLOWED_HOSTS = config['django']['allowed_hosts']
 

@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
-from post.models import Post
+from post.models import Post, PostPhoto
 
 User = get_user_model()
 
@@ -25,3 +25,28 @@ def post_create(request):
         return HttpResponse('{}'.format(post.pk))
     else:
         return HttpResponse('Post create view')
+
+
+@csrf_exempt
+def post_photo_add(request):
+    if request.method == 'POST':
+        try:
+            post_id = request.POST['post_id']
+            photo = request.FILES['photo']
+            post = Post.objects.get(id=post_id)
+        except KeyError:
+            return HttpResponse('post_id and photo are required fields')
+        except Post.DoesNotExist:
+            return HttpResponse('post_id {} is not exist'.format(
+                request.POST['post_id']
+            ))
+        PostPhoto.objects.create(
+            post=post,
+            photo=photo
+        )
+        return HttpResponse('Post: {}, PhotoList: {}'.format(
+            post.id,
+            [photo.id for photo in post.postphoto_set.all()]
+        ))
+    else:
+        return HttpResponse('Post photo add view')
