@@ -10,29 +10,8 @@ User = get_user_model()
 
 
 def post_list(request):
-    post_list = Post.objects.select_related('author')
-    post_dict_list = []
-    for post in post_list:
-        cur_post_photo_list = post.postphoto_set.all()
-        cur_post_photo_dict_list = []
-        for post_photo in cur_post_photo_list:
-            cur_post_photo_dict = {
-                'pk': post_photo.pk,
-                'photo': post_photo.photo.url,
-            }
-            cur_post_photo_dict_list.append(cur_post_photo_dict)
-        cur_post_dict = {
-            'pk': post.pk,
-            'created_date': post.created_date,
-            'photo_list': cur_post_photo_dict_list,
-            'author': {
-                'pk': post.author.pk,
-                'username': post.author.username,
-            },
-        }
-        post_dict_list.append(cur_post_dict)
     context = {
-        'post_list': post_dict_list,
+        'post_list': [post.to_dict() for post in Post.objects.all()],
     }
     return JsonResponse(data=context)
 
