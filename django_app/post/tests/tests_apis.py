@@ -70,8 +70,6 @@ class PostTest(APITestCaseAuthMixin, APILiveServerTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), num)
 
-
-
         # 생성된 response의 author필드가 pk가 아닌 dict형태로 전달되는지 확인
         for item in response.data:
             print(item)
