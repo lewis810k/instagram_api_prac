@@ -48,7 +48,7 @@ class PostTest(APITestCaseAuthMixin, APILiveServerTestCase):
 
         # 생성된 response의 author필드가 pk가 아닌 dict형태로 전달되는지 확인
         self.assertIn('pk', response_author)
-        self.assertIn('user', response_author)
+        self.assertIn('username', response_author)
 
         self.assertEqual(Post.objects.count(), 1)
         post = Post.objects.first()
