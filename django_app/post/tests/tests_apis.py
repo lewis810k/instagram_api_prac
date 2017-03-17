@@ -1,3 +1,5 @@
+import random
+
 from django.contrib.auth import get_user_model
 from django.urls import NoReverseMatch
 from django.urls import resolve
@@ -6,20 +8,19 @@ from rest_framework import status
 from rest_framework.test import APILiveServerTestCase
 
 from post.models import Post
+from utils.testcase import APITestCaseAuthMixin
 
 User = get_user_model()
 
 
-class PostTest(APILiveServerTestCase):
-    test_username = 'test_username'
-    test_password = 'test_password'
+class PostTest(APITestCaseAuthMixin, APILiveServerTestCase):
 
-    def create_user(self):
-        user = User.objects.create_user(
-            username=self.test_username,
-            password=self.test_password,
-        )
-        return user
+    def create_post(self, num=1):
+        url = reverse('api:post-list')
+        for i in range(num):
+            response = self.client.post(url)
+            if num == 1:
+                return response
 
     def test_apis_url_exist(self):
         try:
@@ -34,10 +35,13 @@ class PostTest(APILiveServerTestCase):
             username=self.test_username,
             password=self.test_password,
         )
-        url = reverse('post-create')
-        response = self.client.post(url)
+
+        response = self.create_post()
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn('author', response.data)
+        self.assertIn('created_date', response.data)
+
         self.assertEqual(Post.objects.count(), 1)
         post = Post.objects.first()
         self.assertEqual(post.author.id, user.id)
@@ -49,7 +53,14 @@ class PostTest(APILiveServerTestCase):
         self.assertEqual(Post.objects.exists(), False)
 
     def test_post_list(self):
-        pass
+        self.create_user_and_login(self.client)
+        num = random.randrange(1, 50)
+        self.create_post(num)
+        url = reverse('api:post-list')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), num)
 
     def test_post_update_partial(self):
         pass
@@ -61,4 +72,8 @@ class PostTest(APILiveServerTestCase):
         pass
 
     def test_post_destroy(self):
+        pass
+
+class PostPhotoTest(APILiveServerTestCase):
+    def test_photo_add_to_post(self):
         pass
