@@ -14,7 +14,6 @@ User = get_user_model()
 
 
 class PostTest(APITestCaseAuthMixin, APILiveServerTestCase):
-
     def create_post(self, num=1):
         url = reverse('api:post-list')
         for i in range(num):
@@ -74,6 +73,23 @@ class PostTest(APITestCaseAuthMixin, APILiveServerTestCase):
     def test_post_destroy(self):
         pass
 
-class PostPhotoTest(APILiveServerTestCase):
+
+class PostPhotoTest(APITestCaseAuthMixin, APILiveServerTestCase):
     def test_photo_add_to_post(self):
-        pass
+        user = self.create_user_and_login(self.client)
+        url = reverse('api:post-create')
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Post.objects.count(), 1)
+        post = Post.objects.first()
+        self.assertEqual(post.author, user)
+
+        url = reverse('api:photo-list')
+        with open('test_images.png') as fp:
+            data = {
+                'post': post.id,
+                'photo': fp,
+            }
+            response = self.client.post(url, data)
+
+
