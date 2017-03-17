@@ -78,14 +78,14 @@ class PostTest(APITestCaseAuthMixin, APILiveServerTestCase):
 class PostPhotoTest(APITestCaseAuthMixin, APILiveServerTestCase):
     def test_photo_add_to_post(self):
         user = self.create_user_and_login(self.client)
-        url = reverse('api:post-create')
+        url = reverse('api:post-list')
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Post.objects.count(), 1)
         post = Post.objects.first()
         self.assertEqual(post.author, user)
 
-        url = reverse('api:photo-list')
+        url = reverse('api:photo-create')
         file_path = os.path.join(os.path.dirname(__file__), 'test_image.png')
         with open(file_path, 'rb') as fp:
             data = {
@@ -94,4 +94,13 @@ class PostPhotoTest(APITestCaseAuthMixin, APILiveServerTestCase):
             }
             response = self.client.post(url, data)
 
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn('post', response.data)
+        self.assertIn('photo', response.data)
+        self.assertEqual(post.pk, response.data['post'])
 
+    def test_cannot_photo_add_to_post_not_authenticated(self):
+        pass
+
+    def test_cannot_photo_add_to_post_user_is_not_author(self):
+        pass
