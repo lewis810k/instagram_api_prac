@@ -1,5 +1,6 @@
 import os
 import random
+from pprint import pprint
 
 from django.contrib.auth import get_user_model
 from django.urls import NoReverseMatch
@@ -42,6 +43,13 @@ class PostTest(APITestCaseAuthMixin, APILiveServerTestCase):
         self.assertIn('author', response.data)
         self.assertIn('created_date', response.data)
 
+        response_author = response.data['author']
+        print(response_author)
+
+        # 생성된 response의 author필드가 pk가 아닌 dict형태로 전달되는지 확인
+        self.assertIn('pk', response_author)
+        self.assertIn('user', response_author)
+
         self.assertEqual(Post.objects.count(), 1)
         post = Post.objects.first()
         self.assertEqual(post.author.id, user.id)
@@ -61,6 +69,18 @@ class PostTest(APITestCaseAuthMixin, APILiveServerTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), num)
+
+
+
+        # 생성된 response의 author필드가 pk가 아닌 dict형태로 전달되는지 확인
+        for item in response.data:
+            print(item)
+            self.assertIn('author', item)
+            item_author = item['author']
+            self.assertIn('pk', item_author)
+            self.assertIn('username', item_author)
+            self.assertIn('first_name', item_author)
+            self.assertIn('last_name', item_author)
 
     def test_post_update_partial(self):
         pass
