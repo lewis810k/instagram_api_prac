@@ -20,7 +20,18 @@ class PostTest(APILiveServerTestCase):
         return user
 
     def test_post_create(self):
-        pass
+        user = self.create_user()
+        self.client.login(
+            username=self.test_username,
+            password=self.test_password,
+        )
+        url = reverse('post-create')
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Post.objects.count(), 1)
+        post = Post.objects.first()
+        self.assertEqual(post.author.id, user.id)
 
     def test_cannot_post_create_not_authenticated(self):
         url = reverse('post-create')
