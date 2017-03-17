@@ -91,7 +91,13 @@ class PostTest(APITestCaseAuthMixin, APILiveServerTestCase):
             # self.assertIn('pk', item_photo)
             # self.assertIn('post', item_photo)
             # self.assertIn('photo', item_photo)
-
+            item_postphoto_set = item['postphoto_set']
+            self.assertIsInstance(item_postphoto_set, list)
+            for postphoto_object in item_postphoto_set:
+                print(postphoto_object)
+                self.assertIn('pk', postphoto_object)
+                self.assertIn('photo', postphoto_object)
+                self.assertIn('created_date', postphoto_object)
 
     def test_post_update_partial(self):
         pass

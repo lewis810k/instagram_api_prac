@@ -49,6 +49,12 @@ ALLOWED_HOSTS = config['django']['allowed_hosts']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
+# REST_FRAMEWORK = {
+#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+#     'PAGE_SIZE': 2
+# }
+
+
 # Application definition
 
 INSTALLED_APPS = [

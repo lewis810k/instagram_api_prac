@@ -11,7 +11,7 @@ __all__ = (
 
 class PostSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
-    postphoto_set = PostPhotoSerializer(many=True, read_only=True)
+    postphoto_set = PostPhotoSerializer(many=True, read_only=True, label='photo_list')
 
     class Meta:
         model = Post
