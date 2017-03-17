@@ -23,7 +23,7 @@ def post_create(request):
             author_id = request.POST['author_id']
             author = User.objects.get(id=author_id)
         except KeyError as e:
-            return HttpResponse('key "author_id" is required')
+            return HttpResponse('key "author_id" is required', status=403)
         except User.DoesNotExist:
             return HttpResponse('author_id {} does not exist'.format(
                 request.POST['author_id']
