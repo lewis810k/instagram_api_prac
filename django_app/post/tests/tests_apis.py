@@ -1,3 +1,4 @@
+import os
 import random
 
 from django.contrib.auth import get_user_model
@@ -85,7 +86,8 @@ class PostPhotoTest(APITestCaseAuthMixin, APILiveServerTestCase):
         self.assertEqual(post.author, user)
 
         url = reverse('api:photo-list')
-        with open('test_images.png') as fp:
+        file_path = os.path.join(os.path.dirname(__file__), 'test_image.png')
+        with open(file_path, 'rb') as fp:
             data = {
                 'post': post.id,
                 'photo': fp,
